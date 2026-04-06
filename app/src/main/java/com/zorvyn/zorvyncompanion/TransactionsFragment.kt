@@ -52,6 +52,31 @@ class TransactionsFragment : Fragment() {
         )
         binding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTransactions.adapter = adapter
+
+        // Swipe-to-Delete Implementation
+        val swipeHandler = object : androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(0, androidx.recyclerview.widget.ItemTouchHelper.LEFT or androidx.recyclerview.widget.ItemTouchHelper.RIGHT) {
+            override fun onMove(rv: androidx.recyclerview.widget.RecyclerView, vh: androidx.recyclerview.widget.RecyclerView.ViewHolder, target: androidx.recyclerview.widget.RecyclerView.ViewHolder) = false
+            
+            override fun getSwipeDirs(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder): Int {
+                val position = viewHolder.adapterPosition
+                if (adapter.currentList[position] is TransactionListItem.Header) return 0
+                return super.getSwipeDirs(recyclerView, viewHolder)
+            }
+
+            override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val item = adapter.currentList[position]
+                if (item is TransactionListItem.TransactionItem) {
+                    showDeleteConfirmation(item.transaction) {
+                        // Reset swipe state if cancelled
+                        adapter.notifyItemChanged(position)
+                    }
+                } else {
+                    adapter.notifyItemChanged(position)
+                }
+            }
+        }
+        androidx.recyclerview.widget.ItemTouchHelper(swipeHandler).attachToRecyclerView(binding.rvTransactions)
     }
 
     private fun setupListeners() {
@@ -72,19 +97,50 @@ class TransactionsFragment : Fragment() {
                 updateList()
             }
         }
+
+        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                updateList()
+                return true
+            }
+        })
     }
 
     private fun updateList() {
         val allTransactions = TransactionManager.getAll()
-        val filteredList = when (binding.toggleFilter.checkedButtonId) {
-            R.id.btnIncome -> allTransactions.filter { it.type == TransactionType.INCOME }
-            R.id.btnExpense -> allTransactions.filter { it.type == TransactionType.EXPENSE }
-            else -> allTransactions
+        val query = binding.searchView.query.toString().lowercase()
+
+        val filteredTransactions = allTransactions.filter { transaction ->
+            val matchesFilter = when (binding.toggleFilter.checkedButtonId) {
+                R.id.btnIncome -> transaction.type == TransactionType.INCOME
+                R.id.btnExpense -> transaction.type == TransactionType.EXPENSE
+                else -> true
+            }
+
+            val matchesSearch = transaction.category.lowercase().contains(query) ||
+                    (transaction.notes?.lowercase()?.contains(query) ?: false) ||
+                    transaction.amount.toString().contains(query)
+
+            matchesFilter && matchesSearch
         }
-        adapter.submitList(filteredList)
+
+        val listItems = mutableListOf<TransactionListItem>()
+        val grouped = filteredTransactions.groupBy { it.date }
+        
+        // Sorting by date (assuming MMM dd, yyyy format, we might need a parser for better sorting)
+        grouped.keys.sortedDescending().forEach { date ->
+            listItems.add(TransactionListItem.Header(date))
+            grouped[date]?.forEach { transaction ->
+                listItems.add(TransactionListItem.TransactionItem(transaction))
+            }
+        }
+
+        adapter.submitList(listItems)
+        binding.emptyState.visibility = if (listItems.isEmpty()) View.VISIBLE else View.GONE
     }
 
-    private fun showDeleteConfirmation(transaction: Transaction) {
+    private fun showDeleteConfirmation(transaction: Transaction, onCancel: (() -> Unit)? = null) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Transaction")
             .setMessage("Are you sure you want to delete this transaction?")
@@ -92,7 +148,12 @@ class TransactionsFragment : Fragment() {
                 TransactionManager.deleteTransaction(transaction.id)
                 updateList()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Cancel") { _, _ ->
+                onCancel?.invoke()
+            }
+            .setOnCancelListener {
+                onCancel?.invoke()
+            }
             .show()
     }
 

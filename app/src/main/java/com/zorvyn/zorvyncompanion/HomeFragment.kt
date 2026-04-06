@@ -59,24 +59,72 @@ class HomeFragment : Fragment() {
             )
         }
         
-        binding.balanceCard.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_transactionsFragment)
+        binding.weeklyCard.setOnClickListener {
+            findNavController().navigate(R.id.insightsFragment)
         }
+
+        binding.categoryCard.setOnClickListener {
+            findNavController().navigate(R.id.insightsFragment)
+        }
+
+        binding.headerBg.setOnClickListener {
+            findNavController().navigate(R.id.transactionsFragment)
+        }
+
+        binding.savingsCard.setOnClickListener {
+            findNavController().navigate(R.id.goalsFragment)
+        }
+    }
+
+    private fun showGoalEditDialog() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_goal, null)
+        val etName = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etGoalName)
+        val etTarget = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etGoalTarget)
+
+        val primaryGoal = GoalManager.getAllGoals().firstOrNull()
+        etName.setText(primaryGoal?.name ?: "Emergency Fund")
+        etTarget.setText((primaryGoal?.target ?: 5000.0).toString())
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Set Savings Goal")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val newName = etName.text.toString()
+                val newTarget = etTarget.text.toString().toDoubleOrNull() ?: (primaryGoal?.target ?: 5000.0)
+                
+                if (primaryGoal != null) {
+                    GoalManager.deleteGoal(primaryGoal.id)
+                }
+                GoalManager.addGoal(newName, newTarget)
+                updateUI()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun updateUI() {
         val formatter = NumberFormat.getCurrencyInstance(Locale.US)
-        val balance = TransactionManager.getBalance()
-        binding.tvBalanceAmount.text = if (balance >= 0) {
-            formatter.format(balance)
-        } else {
-            "-${formatter.format(-balance)}"
-        }
         
-        binding.tvHomeIncome.text = "Income: ${formatter.format(TransactionManager.getIncome())}"
-        binding.tvHomeExpense.text = "Expense: ${formatter.format(TransactionManager.getExpense())}"
+        binding.tvBalanceAmount.text = formatter.format(TransactionManager.getBalance())
+        binding.tvHomeIncome.text = formatter.format(TransactionManager.getIncome())
+        binding.tvHomeExpense.text = formatter.format(TransactionManager.getExpense())
         
-        setupPieChart() 
+        updateGoalUI(formatter)
+        setupCharts()
+    }
+
+    private fun updateGoalUI(formatter: NumberFormat) {
+        val primaryGoal = GoalManager.getAllGoals().firstOrNull() ?: return
+        
+        val currentSavings = primaryGoal.current
+        val goalName = primaryGoal.name
+        val goalTarget = primaryGoal.target
+        val progress = ((currentSavings / goalTarget) * 100).toInt().coerceIn(0, 100)
+
+        binding.tvGoalName.text = goalName
+        binding.tvGoalPercent.text = "$progress%"
+        binding.savingsProgress.progress = progress
+        binding.tvGoalStatus.text = "${formatter.format(currentSavings)} of ${formatter.format(goalTarget)}"
     }
 
     private fun setupCharts() {
@@ -99,8 +147,8 @@ class HomeFragment : Fragment() {
 
         val colors = ArrayList<Int>()
         for (i in 0 until entries.size) {
-            if (i == 2) colors.add(Color.parseColor("#4CAF50"))
-            else colors.add(Color.parseColor("#EF5350"))
+            if (i == 2) colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_green))
+            else colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_red))
         }
 
         val dataSet = BarDataSet(entries, "Daily Activity")
@@ -149,8 +197,8 @@ class HomeFragment : Fragment() {
         }
 
         val colors = ArrayList<Int>()
-        colors.add(Color.parseColor("#4CAF50"))
-        colors.add(Color.parseColor("#EF5350"))
+        colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_green))
+        colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_red))
 
         val dataSet = PieDataSet(entries, "")
         dataSet.colors = colors
