@@ -1,35 +1,73 @@
 package com.zorvyn.zorvyncompanion
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.zorvyn.zorvyncompanion.databinding.TransactionItemBinding
+import com.zorvyn.zorvyncompanion.databinding.TransactionHeaderItemBinding
 import java.text.NumberFormat
 import java.util.Locale
+
+sealed class TransactionListItem {
+    data class Header(val date: String) : TransactionListItem()
+    data class TransactionItem(val transaction: Transaction) : TransactionListItem()
+}
 
 class TransactionAdapter(
     private val onTransactionClick: (Transaction) -> Unit,
     private val onTransactionLongClick: (Transaction) -> Unit
-) : ListAdapter<Transaction, TransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
+) : ListAdapter<TransactionListItem, RecyclerView.ViewHolder>(TransactionDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
-        val binding = TransactionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return TransactionViewHolder(binding)
+    companion object {
+        private const val TYPE_HEADER = 0
+        private const val TYPE_TRANSACTION = 1
     }
 
-    override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is TransactionListItem.Header -> TYPE_HEADER
+            is TransactionListItem.TransactionItem -> TYPE_TRANSACTION
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            TYPE_HEADER -> {
+                val binding = TransactionHeaderItemBinding.inflate(inflater, parent, false)
+                HeaderViewHolder(binding)
+            }
+            else -> {
+                val binding = TransactionItemBinding.inflate(inflater, parent, false)
+                TransactionViewHolder(binding)
+            }
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (val item = getItem(position)) {
+            is TransactionListItem.Header -> (holder as HeaderViewHolder).bind(item.date)
+            is TransactionListItem.TransactionItem -> (holder as TransactionViewHolder).bind(item.transaction)
+        }
+    }
+
+    inner class HeaderViewHolder(private val binding: TransactionHeaderItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(date: String) {
+            binding.tvHeaderDate.text = date.uppercase()
+        }
     }
 
     inner class TransactionViewHolder(private val binding: TransactionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaction: Transaction) {
-            binding.tvCategory.text = transaction.category
-            binding.tvDate.text = transaction.date
+            binding.tvCategory.text = transaction.notes ?: transaction.category
+            binding.tvSubCategory.text = transaction.category
             
             val formatter = NumberFormat.getCurrencyInstance(Locale.US)
             val amount = transaction.amount
@@ -52,8 +90,19 @@ class TransactionAdapter(
         }
     }
 
-    class TransactionDiffCallback : DiffUtil.ItemCallback<Transaction>() {
-        override fun areItemsTheSame(oldItem: Transaction, newItem: Transaction) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Transaction, newItem: Transaction) = oldItem == newItem
+    class TransactionDiffCallback : DiffUtil.ItemCallback<TransactionListItem>() {
+        override fun areItemsTheSame(oldItem: TransactionListItem, newItem: TransactionListItem): Boolean {
+            return if (oldItem is TransactionListItem.Header && newItem is TransactionListItem.Header) {
+                oldItem.date == newItem.date
+            } else if (oldItem is TransactionListItem.TransactionItem && newItem is TransactionListItem.TransactionItem) {
+                oldItem.transaction.id == newItem.transaction.id
+            } else {
+                false
+            }
+        }
+
+        override fun areContentsTheSame(oldItem: TransactionListItem, newItem: TransactionListItem): Boolean {
+            return oldItem == newItem
+        }
     }
 }

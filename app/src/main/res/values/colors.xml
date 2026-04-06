@@ -3,21 +3,27 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     
-    <!-- Finance Dashboard Palette -->
-    <color name="colorBackground">#F5F5F5</color>
+    <!-- Finance Dashboard Palette (Screenshot Matched) -->
+    <color name="colorBackground">#F5F7FA</color>
     <color name="colorPrimary">#2E7D32</color>
-    <color name="colorIncome">#4CAF50</color>
-    <color name="colorExpense">#F44336</color>
+    <color name="colorIncome">#66BB6A</color>
+    <color name="colorExpense">#EF5350</color>
     
     <!-- Balance Card Gradient -->
-    <color name="gradientStart">#1B5E20</color>
-    <color name="gradientEnd">#43A047</color>
+    <color name="gradientStart">#2E7D32</color>
+    <color name="gradientEnd">#4CAF50</color>
+    
+    <!-- Chart Colors from Screenshot -->
+    <color name="chart_green">#66BB6A</color>
+    <color name="chart_red">#EF5350</color>
+    <color name="chart_blue">#42A5F5</color>
+    <color name="chart_yellow">#FFCA28</color>
     
     <!-- Categories -->
-    <color name="cat_shopping">#2196F3</color>
-    <color name="cat_bills">#9C27B0</color>
-    <color name="cat_food">#FF9800</color>
-    <color name="cat_transport">#00BCD4</color>
+    <color name="cat_shopping">#42A5F5</color>
+    <color name="cat_bills">#AB47BC</color>
+    <color name="cat_food">#FF7043</color>
+    <color name="cat_transport">#4DB6AC</color>
     
     <!-- Text Colors -->
     <color name="textPrimary">#212121</color>
