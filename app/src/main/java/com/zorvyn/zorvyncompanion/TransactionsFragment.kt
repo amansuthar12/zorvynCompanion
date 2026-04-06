@@ -137,7 +137,7 @@ class TransactionsFragment : Fragment() {
         }
 
         adapter.submitList(listItems)
-        binding.emptyState.visibility = if (listItems.isEmpty()) View.VISIBLE else View.GONE
+        binding.tvEmptyState.visibility = if (listItems.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun showDeleteConfirmation(transaction: Transaction, onCancel: (() -> Unit)? = null) {

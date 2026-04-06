@@ -12,13 +12,32 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_transactionsFragment"
-            app:destination="@id/transactionsFragment" />
+            app:destination="@id/transactionsFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
         <action
             android:id="@+id/action_homeFragment_to_addTransactionFragment"
-            app:destination="@id/addTransactionFragment" />
+            app:destination="@id/addTransactionFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
         <action
             android:id="@+id/action_homeFragment_to_insightsFragment"
-            app:destination="@id/insightsFragment" />
+            app:destination="@id/insightsFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_homeFragment_to_goalsFragment"
+            app:destination="@id/goalsFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <fragment
@@ -28,7 +47,11 @@
         tools:layout="@layout/fragment_transactions">
         <action
             android:id="@+id/action_transactionsFragment_to_addTransactionFragment"
-            app:destination="@id/addTransactionFragment" />
+            app:destination="@id/addTransactionFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <fragment
@@ -52,6 +75,6 @@
     <fragment
         android:id="@+id/goalsFragment"
         android:name="com.zorvyn.zorvyncompanion.GoalsFragment"
-        android:label="fragment_goals"
+        android:label="Goals"
         tools:layout="@layout/fragment_goals" />
 </navigation>

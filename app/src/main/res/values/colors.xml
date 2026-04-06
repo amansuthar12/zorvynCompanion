@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     
-    <!-- Finance Dashboard Palette (Screenshot Matched) -->
-    <color name="colorBackground">#F5F7FA</color>
+    <!-- Unified Design System Palette -->
     <color name="colorPrimary">#2E7D32</color>
-    <color name="colorIncome">#66BB6A</color>
-    <color name="colorExpense">#EF5350</color>
+    <color name="colorPrimaryLight">#4CAF50</color>
+    <color name="colorBackground">#F5F5F5</color>
+    <color name="colorCard">#FFFFFF</color>
     
-    <!-- Balance Card Gradient -->
-    <color name="gradientStart">#2E7D32</color>
-    <color name="gradientEnd">#4CAF50</color>
+    <!-- Semantic Colors -->
+    <color name="colorIncome">#2E7D32</color>
+    <color name="colorExpense">#E53935</color>
     
-    <!-- Chart Colors from Screenshot -->
-    <color name="chart_green">#66BB6A</color>
-    <color name="chart_red">#EF5350</color>
-    <color name="chart_blue">#42A5F5</color>
-    <color name="chart_yellow">#FFCA28</color>
-    
-    <!-- Categories -->
-    <color name="cat_shopping">#42A5F5</color>
-    <color name="cat_bills">#AB47BC</color>
-    <color name="cat_food">#FF7043</color>
-    <color name="cat_transport">#4DB6AC</color>
+    <!-- Chart Colors -->
+    <color name="chart_primary">#66BB6A</color>
+    <color name="chart_secondary">#42A5F5</color>
+    <color name="chart_accent">#FFCA28</color>
+    <color name="chart_alert">#EF5350</color>
     
     <!-- Text Colors -->
     <color name="textPrimary">#212121</color>

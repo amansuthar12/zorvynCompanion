@@ -121,10 +121,9 @@ class HomeFragment : Fragment() {
         val goalTarget = primaryGoal.target
         val progress = ((currentSavings / goalTarget) * 100).toInt().coerceIn(0, 100)
 
-        binding.tvGoalName.text = goalName
-        binding.tvGoalPercent.text = "$progress%"
-        binding.savingsProgress.progress = progress
-        binding.tvGoalStatus.text = "${formatter.format(currentSavings)} of ${formatter.format(goalTarget)}"
+        binding.tvGoalValue.text = formatter.format(goalTarget)
+        binding.tvGoalProgress.text = "$progress%"
+        binding.goalProgressIndicator.progress = progress
     }
 
     private fun setupCharts() {
@@ -147,8 +146,8 @@ class HomeFragment : Fragment() {
 
         val colors = ArrayList<Int>()
         for (i in 0 until entries.size) {
-            if (i == 2) colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_green))
-            else colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_red))
+            if (i == 2) colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.colorIncome))
+            else colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.colorExpense))
         }
 
         val dataSet = BarDataSet(entries, "Daily Activity")
@@ -197,8 +196,8 @@ class HomeFragment : Fragment() {
         }
 
         val colors = ArrayList<Int>()
-        colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_green))
-        colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_red))
+        colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.colorIncome))
+        colors.add(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.colorExpense))
 
         val dataSet = PieDataSet(entries, "")
         dataSet.colors = colors
