@@ -145,7 +145,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:text="Save Transaction"
-                app:cornerRadius="12dp" />
+                android:backgroundTint="@color/colorPrimary"
+                app:cornerRadius="16dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -47,23 +47,23 @@ class InsightsFragment : Fragment() {
         
         val dataSet = PieDataSet(entries, "")
         val colors = listOf(
-            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_blue),
-            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.cat_bills),
-            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_yellow),
-            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.cat_food),
-            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_red)
+            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_primary),
+            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_secondary),
+            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_accent),
+            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_alert),
+            androidx.core.content.ContextCompat.getColor(requireContext(), R.color.colorPrimaryLight)
         )
         dataSet.colors = colors
         dataSet.setDrawValues(false)
         
         val data = PieData(dataSet)
-        binding.pieChart.data = data
-        binding.pieChart.description.isEnabled = false
-        binding.pieChart.legend.isEnabled = false
-        binding.pieChart.isDrawHoleEnabled = true
-        binding.pieChart.holeRadius = 70f
-        binding.pieChart.setTransparentCircleAlpha(0)
-        binding.pieChart.invalidate()
+        binding.insightsPieChart.data = data
+        binding.insightsPieChart.description.isEnabled = false
+        binding.insightsPieChart.legend.isEnabled = false
+        binding.insightsPieChart.isDrawHoleEnabled = true
+        binding.insightsPieChart.holeRadius = 70f
+        binding.insightsPieChart.setTransparentCircleAlpha(0)
+        binding.insightsPieChart.invalidate()
     }
 
     private fun setupCategoryList() {
@@ -77,10 +77,10 @@ class InsightsFragment : Fragment() {
                 amount = amount,
                 percentage = percentage,
                 color = when (category) {
-                    "Shopping" -> androidx.core.content.ContextCompat.getColor(requireContext(), R.color.cat_shopping)
-                    "Food" -> androidx.core.content.ContextCompat.getColor(requireContext(), R.color.cat_food)
-                    "Transport" -> androidx.core.content.ContextCompat.getColor(requireContext(), R.color.cat_transport)
-                    "Bills" -> androidx.core.content.ContextCompat.getColor(requireContext(), R.color.cat_bills)
+                    "Shopping" -> androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_accent)
+                    "Food" -> androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_secondary)
+                    "Transport" -> androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_primary)
+                    "Bills" -> androidx.core.content.ContextCompat.getColor(requireContext(), R.color.chart_alert)
                     else -> Color.parseColor("#607D8B")
                 },
                 iconRes = R.drawable.ic_insights
